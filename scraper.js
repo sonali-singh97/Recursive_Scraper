@@ -1,6 +1,7 @@
 import request from 'request-promise';
 import cheerio from 'cheerio';
 import pLimit from 'p-limit';
+import Questions from './models/questions.js';
 
 const limit = pLimit(1);
 
@@ -22,25 +23,38 @@ const start = async () => {
     
     // Parse HTML using Cheerio library
     let $ = cheerio.load(response);
-    let posts = [];
-    $('#questions > .question-summary').each((i, elm) => {
-        let score = {
-            votes: $(elm).find('.votes > .vote-count-post').text().trim(),
-            answers: $(elm).find('.stats > .status > strong').text().trim(),
-            views: $(elm).find('.statscontainer > .views').text().trim().split(" ")[0],
-        }
-        let title = $(elm).find('.summary .question-hyperlink').text().trim();
-        let url =  $(elm).find('.summary .question-hyperlink').attr("href").trim();
-        let time = $(elm).find('.user-info span').attr("title").trim();
 
-        posts.push({
-            title,
-            url,
-            score,
-            time
-        });
+    $('#questions > .question-summary').each(async (i, elm) => {
+        let postData = {
+            votes: parseInt( $(elm).find('.votes > .vote-count-post').text().trim()),
+            answers: parseInt( $(elm).find('.stats > .status > strong').text().trim()),
+            views: parseInt( $(elm).find('.statscontainer > .views').text().trim().split(" ")[0]),
+            //title = $(elm).find('.summary .question-hyperlink').text().trim(),
+           // url =  $(elm).find('.summary .question-hyperlink').attr("href").trim(),
+            //time = $(elm).find('.user-info span').attr("title").trim()
+            title: "title",
+            url: "url", 
+            time: "time"
+        }
+
+        console.log("postData", postData)
+
+      // find if url already exists increase its reference count
+       const postFound = Questions.findOne({url : postData.url}, async (err, ques) => {
+            if (err) return handleError(err);
+            ques.referenceCount = ques.referenceCount + 1;
+            const modifiedPost = await ques.save();
+            console.log("modifiedPost" , modifiedPost)
+       } )
+
+       //if url is not present insert a new post into db
+       if(postFound){
+        const postObj = new Questions(postData);
+        const newPost = await postObj.save();
+        console.log("newPost", newPost);
+       }
     })
-    console.log(posts);}
+    }
 
     catch(err){
         console.log(err);

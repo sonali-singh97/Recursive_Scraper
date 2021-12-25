@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import Mongoose from "mongoose";
 
 const questionSchema = new Mongoose.Schema({
     title: {
@@ -23,10 +23,10 @@ const questionSchema = new Mongoose.Schema({
     },
     referenceCount: {
         type: Number,
-        default: 0
+        default: 1
     },
     time: {
-        type: Number,
+        type: String,
         required: true,
     }
     
