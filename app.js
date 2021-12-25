@@ -1,6 +1,6 @@
-const logger = require('morgan');
-const express = require('express');
-const scraper = require('./scraper');
+import logger from 'morgan';
+import express from 'express';
+import scraper from './scraper.js';
 
 // Create an Express application
 const app = express();

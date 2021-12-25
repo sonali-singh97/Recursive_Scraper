@@ -1,5 +1,8 @@
-const request = require('request-promise');
-const cheerio = require('cheerio');
+import request from 'request-promise';
+import cheerio from 'cheerio';
+import pLimit from 'p-limit';
+
+const limit = pLimit(1);
 
 const start = async () => {
     const BASE_URL = `https://stackoverflow.com/questions`;
@@ -17,6 +20,7 @@ const start = async () => {
         }
     );
     
+    // Parse HTML using Cheerio library
     let $ = cheerio.load(response);
     let posts = [];
     $('#questions > .question-summary').each((i, elm) => {
@@ -43,6 +47,13 @@ const start = async () => {
         console.log(err);
     }
 }
-start();
 
-module.exports = start;
+const promise = [limit(() => start())]
+
+const executeScraper = async () => {
+
+    const result = await Promise.all(promise);
+    console.log(result);
+};
+
+export default executeScraper;
