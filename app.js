@@ -1,5 +1,6 @@
 const logger = require('morgan');
 const express = require('express');
+const scraper = require('./scraper');
 
 // Create an Express application
 const app = express();
@@ -12,4 +13,14 @@ app.set('port', port);
 app.use(logger('dev'));
 
 // Start the server and listen on the  port
-app.listen(port, () => console.log(`App started on port ${port}.`));
+app.listen(port, 
+    async () => {
+        console.log(`App started on port ${port}.`)
+        try {
+            await scraper;
+        }
+       catch(err){
+           console.log(err);
+       }
+    }
+    );
