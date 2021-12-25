@@ -32,13 +32,12 @@ const start = async () => {
         let title = $(elm).find('.summary .question-hyperlink').text().trim();
         let url =  $(elm).find('.summary .question-hyperlink').attr("href").trim();
         let time = $(elm).find('.user-info span').attr("title").trim();
-        let author = $(elm).find('.user-info > .user-details a').text().trim();
+
         posts.push({
             title,
             url,
             score,
-            time,
-            author
+            time
         });
     })
     console.log(posts);}
