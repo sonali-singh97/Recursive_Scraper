@@ -33,6 +33,8 @@ app.listen(port,
    async () => {
         console.log(`App started on port ${port}.`)
         await scraper();
+
+        // Convert to csv after scraping specified humber of pages
         convertToCSV()
     }
  );
