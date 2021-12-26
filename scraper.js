@@ -1,4 +1,3 @@
-import request from 'request-promise';
 import cheerio from 'cheerio';
 import pLimit from 'p-limit';
 import Questions from './models/questions.js';
