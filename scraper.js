@@ -3,13 +3,14 @@ import cheerio from 'cheerio';
 import pLimit from 'p-limit';
 import Questions from './models/questions.js';
 
-const limit = pLimit(5);
+const limit = pLimit(5); // Number of concurrent requests
+const numOfPages = 10;  // Number of pages to scrape
 
-const start = async (url) => {
+const start = async (base_url) => {
 
     try {
-    let response = await request(
-        url,
+        let response = await request(
+        base_url,
         {
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'accept-encoding': 'gzip, deflate, br',
@@ -22,35 +23,31 @@ const start = async (url) => {
     
     // Parse HTML using Cheerio library
     let $ = cheerio.load(response);
-
+    
     $('#questions > .question-summary').each(async (i, elm) => {
         let postData = {
             votes: parseInt( $(elm).find('.votes > .vote-count-post').text().trim()),
             answers: parseInt( $(elm).find('.stats > .status > strong').text().trim()),
             views: parseInt( $(elm).find('.statscontainer > .views').text().trim().split(" ")[0]),
-            //title = $(elm).find('.summary .question-hyperlink').text().trim(),
-           // url =  $(elm).find('.summary .question-hyperlink').attr("href").trim(),
-            //time = $(elm).find('.user-info span').attr("title").trim()
-            title: "title",
-            url: "url", 
-            time: "time"
+            title:$(elm).find('.summary .question-hyperlink').text().trim(),
+            url:  $(elm).find('.summary .question-hyperlink').attr("href").trim(),
+            time: $(elm).find('.user-info span').attr("title").trim()
         }
 
-        // console.log("postData", postData)
+        //console.log("postData", postData)
 
       // find if url already exists increase its reference count
-       const postFound = Questions.findOne({url : postData.url}, async (err, ques) => {
-            if (err) return handleError(err);
-            ques.referenceCount = ques.referenceCount + 1;
-            const modifiedPost = await ques.save();
-            console.log("modifiedPost" , modifiedPost)
-       } )
-
-       //if url is not present insert a new post into db
+       const postFound = await Questions.findOne ({url : postData.url})
        if(postFound){
+            await Questions.updateOne({url : postData.url}, {$set : { referenceCount : postFound.referenceCount + 1}})
+            //console.log("Modified data")
+       }
+
+      else{
+        //if url is not present insert a new post into db
         const postObj = new Questions(postData);
         const newPost = await postObj.save();
-        console.log("newPost", newPost);
+       // console.log("newPost", newPost);
        }
     })
     }
@@ -61,16 +58,16 @@ const start = async (url) => {
 }
 
 // Create a list of urls of different pages
-const num = [...Array.from({length: 10}, (_, i) => `https://stackoverflow.com/questions?tab=newest&page=${i+1}`)];
+const num = [...Array.from({length: numOfPages}, (_, i) => `https://stackoverflow.com/questions?tab=newest&page=${i+1}`)];
 const promises = num.map(url => limit(() => start(url)) )
 
 console.log(num)
-
 
 //Scrape concurrently 5 pages at all times
 const executeScraper = async () => {
     const result = await Promise.all(promises);
     console.log(result);
 };
+
 
 export default executeScraper;

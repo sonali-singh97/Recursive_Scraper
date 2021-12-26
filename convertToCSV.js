@@ -1,23 +1,38 @@
 import { Parser } from "json2csv";
+import fs from "fs";
 import Questions from './models/questions.js';
 
-const convertToCSV =  async () => {
+export const convertToCSV =  async () => {
     console.log("function start")
-    await Questions.find({}).lean().exec((err, data) => {
-        if (err) throw err;
+    await Questions.deleteMany({});
+    try {
+       Questions.find({}).lean().exec((err, data) => {
+        if (err) console.log(err);
+        
+        // Create an array of all the required fields in csv
         const csvFields = ['title', 'url', 'votes', 'answers','views', 'referenceCount']
         console.log(csvFields);
-        const Parser = new Parser({
+        const jsonParser = new Parser({
             csvFields
         });
-        const csvData = Parser.parse(data);
+
+        // Use json2csv to convert the json data into csv format
+        const csvData = jsonParser.parse(data);
         fs.writeFile("questions_data.csv", csvData, function(error) {
             if (error) throw error;
             console.log("Write to questions_data.csv successfully!");
         });
-        res.send('File downloaded Successfully')
-    })
-    await Questions.deleteMany({});
-}
 
-export default convertToCSV;
+        //File downloaded successfully
+      console.log('File downloaded Successfully')
+
+    })
+
+    // Delete all entries from database
+        // await Questions.deleteMany({});
+
+    }
+    catch(err){
+        console.log(err)
+    }
+}

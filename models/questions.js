@@ -28,8 +28,9 @@ const questionSchema = new Mongoose.Schema({
     time: {
         type: String,
         required: true,
-    }
-    
+    } 
+},{
+  versionKey: false
 })
 
 const Questions = Mongoose.model("Question", questionSchema)

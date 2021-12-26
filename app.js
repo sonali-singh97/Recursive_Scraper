@@ -2,7 +2,7 @@ import logger from 'morgan';
 import express from 'express';
 import mongoose from 'mongoose';
 import scraper from './scraper.js';
-import convertToCSV from "./convertToCSV.js";
+import { convertToCSV } from "./convertToCSV.js";
 
 //Set up default mongoose connection
 var mongoURL = 'mongodb://localhost:27017/recursive_scraper';
@@ -27,15 +27,25 @@ app.set('port', port);
 // Load middlewares
 app.use(logger('dev'));
 
+//app.post("/convert-to-csv", convertToCSV);
+
 // Start the server and listen on the  port
 app.listen(port, 
-    async () => {
+   () => {
         console.log(`App started on port ${port}.`)
-        try {
-            await convertToCSV;
-        }
-       catch(err){
-           console.log(err);
-       }
     }
-    );
+ );
+
+//  death( async (signal, err) => {
+//     const p = await convertToCSV()
+//     console.log(p)
+//     console.log("close program")
+// })
+
+process.on('SIGINT', async () => {
+  
+  console.log("Caught interrupt signal");
+  await convertToCSV()
+  // if (i_should_exit)
+  process.exit();
+});
