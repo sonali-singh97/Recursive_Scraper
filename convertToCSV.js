@@ -4,7 +4,7 @@ import Questions from './models/questions.js';
 
 export const convertToCSV =  async () => {
     try {
-       Questions.find({}).lean().exec((err, data) => {
+        Questions.find({}).lean().exec((err, data) => {
         if (err) console.log(err);
         
         // Create an array of all the required fields in csv
