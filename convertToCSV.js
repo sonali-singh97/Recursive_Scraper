@@ -4,7 +4,7 @@ import Questions from './models/questions.js';
 
 export const convertToCSV =  async () => {
     console.log("function start")
-    await Questions.deleteMany({});
+
     try {
        Questions.find({}).lean().exec((err, data) => {
         if (err) console.log(err);
@@ -29,7 +29,7 @@ export const convertToCSV =  async () => {
     })
 
     // Delete all entries from database
-        // await Questions.deleteMany({});
+         await Questions.deleteMany({});
 
     }
     catch(err){
