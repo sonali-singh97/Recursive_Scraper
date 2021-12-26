@@ -2,6 +2,7 @@ import logger from 'morgan';
 import express from 'express';
 import mongoose from 'mongoose';
 import scraper from './scraper.js';
+import convertToCSV from "./convertToCSV.js";
 
 //Set up default mongoose connection
 var mongoURL = 'mongodb://localhost:27017/recursive_scraper';
@@ -31,7 +32,7 @@ app.listen(port,
     async () => {
         console.log(`App started on port ${port}.`)
         try {
-            await scraper;
+            await convertToCSV;
         }
        catch(err){
            console.log(err);

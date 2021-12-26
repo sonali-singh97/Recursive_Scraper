@@ -3,14 +3,13 @@ import cheerio from 'cheerio';
 import pLimit from 'p-limit';
 import Questions from './models/questions.js';
 
-const limit = pLimit(1);
+const limit = pLimit(5);
 
-const start = async () => {
-    const BASE_URL = `https://stackoverflow.com/questions`;
+const start = async (url) => {
 
     try {
     let response = await request(
-        BASE_URL,
+        url,
         {
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'accept-encoding': 'gzip, deflate, br',
@@ -37,7 +36,7 @@ const start = async () => {
             time: "time"
         }
 
-        console.log("postData", postData)
+        // console.log("postData", postData)
 
       // find if url already exists increase its reference count
        const postFound = Questions.findOne({url : postData.url}, async (err, ques) => {
@@ -61,11 +60,16 @@ const start = async () => {
     }
 }
 
-const promise = [limit(() => start())]
+// Create a list of urls of different pages
+const num = [...Array.from({length: 10}, (_, i) => `https://stackoverflow.com/questions?tab=newest&page=${i+1}`)];
+const promises = num.map(url => limit(() => start(url)) )
 
+console.log(num)
+
+
+//Scrape concurrently 5 pages at all times
 const executeScraper = async () => {
-
-    const result = await Promise.all(promise);
+    const result = await Promise.all(promises);
     console.log(result);
 };
 
