@@ -28,18 +28,16 @@ app.set('port', port);
 // Load middlewares
 app.use(logger('dev'));
 
-//app.get("/convert-to-csv", convertToCSV);
-
 // Start the server and listen on the  port
 app.listen(port, 
    () => {
         console.log(`App started on port ${port}.`)
         scraper();
-        //convertToCSV()
+        convertToCSV()
     }
  );
 
-
+// Call on termination of process
 process.on('SIGINT', () => {
   console.log(" Terminate Process")
   convertToCSV()

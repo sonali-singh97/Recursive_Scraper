@@ -5,7 +5,7 @@ import Questions from './models/questions.js';
 import axios from 'axios';
 
 const limit = pLimit(5); // Number of concurrent requests
-const numOfPages = 10;  // Number of pages to scrape
+const numOfPages = 400;  // Number of pages to scrape
 
 const start = async (base_url) => {
 
@@ -49,9 +49,6 @@ const executeScraper = async () => {
 
     // Create a list of urls of different pages
     const num = [...Array.from({length: numOfPages}, (_, i) => `https://stackoverflow.com/questions?tab=newest&page=${i+1}`)];
-    const promises = num.map(url => limit(() => start(url)) )
-    console.log(num)
-
     const result = await Promise.all(num.map(url => limit(() => start(url)) ));
 
 };
