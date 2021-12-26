@@ -9,6 +9,9 @@ The main functionality is to scrape all unique questions with their details and 
 If a user terminates the app, then all the data will be stored in the CSV file.
 
 
+### Demo
+[![Scraper Demo ](https://res.cloudinary.com/talk-amigo/image/upload/v1640506385/yt_thumbnail_ieoozp.jpg)](https://youtu.be/40U7PtaFtMw)
+
 ## Features
 
 - Retrieve all unique questions.
@@ -16,8 +19,6 @@ If a user terminates the app, then all the data will be stored in the CSV file.
 - Store data in MongoDB.
 - Track reference count of every unique question.
 - Convert the data into CSV on termination.
-
-
 
 
 ### Folder Structure
