@@ -30,9 +30,9 @@ app.use(logger('dev'));
 
 // Start the server and listen on the  port
 app.listen(port, 
-   () => {
+   async () => {
         console.log(`App started on port ${port}.`)
-        scraper();
+        await scraper();
         convertToCSV()
     }
  );
