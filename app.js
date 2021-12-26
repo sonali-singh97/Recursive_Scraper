@@ -2,7 +2,7 @@ import logger from 'morgan';
 import express from 'express';
 import mongoose from 'mongoose';
 import scraper from './scraper.js';
-import { convertToCSV } from "./convertToCSV.js";
+import { convertToCSV } from "./convertToCsv.js";
 
 
 //Set up default mongoose connection
@@ -35,7 +35,7 @@ app.listen(port,
    () => {
         console.log(`App started on port ${port}.`)
         scraper();
-        convertToCSV()
+        //convertToCSV()
     }
  );
 

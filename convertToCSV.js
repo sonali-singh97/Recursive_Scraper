@@ -3,15 +3,12 @@ import fs from "fs";
 import Questions from './models/questions.js';
 
 export const convertToCSV =  async () => {
-    console.log("function start")
-
     try {
        Questions.find({}).lean().exec((err, data) => {
         if (err) console.log(err);
         
         // Create an array of all the required fields in csv
         const csvFields = ['title', 'url', 'votes', 'answers','views', 'referenceCount']
-        console.log(csvFields);
         const jsonParser = new Parser({
             csvFields
         });
